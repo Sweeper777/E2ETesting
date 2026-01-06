@@ -61,7 +61,14 @@ final class MyTests {
         #assertNotContains(array, 1, stopIfFail: false)
         #assertNotContains(array, 4, stopIfFail: false)
     }
+    
+    @TestMethod
+    func alreadyFulfilledExpectation() async throws {
+        let expectation = Expectation(name: "Already Fulfilled")
+        await expectation.fulfillIsolated()
+        try await fulfilment(of: [expectation], timeout: 10, stopIfFail: false)
+    }
 }
 
-let report = try await TestRunner.run(MyTests.self, methodName: "sequences")
+let report = try await TestRunner.run(MyTests.self, methodName: "alreadyFulfilledExpectation")
 //try report.makeMarkdown().format().data(using: .utf8)!.write(to: URL(filePath: "/Users/mulangsu/Desktop/report.md"))

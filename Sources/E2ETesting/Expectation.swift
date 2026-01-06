@@ -48,6 +48,11 @@ public func fulfilment(of expectations: [Expectation], timeout: TimeInterval, st
         }
         for expectation in expectations {
             group.addTask {
+                if await expectation.fullyFulfilled {
+                    let expected = expectation.expectedFulfilmentCount
+                    await log("Expectation '\(expectation.name)' fulfilled \(expected) time(s) as expected.", .success)
+                    return
+                }
                 for await _ in NotificationCenter.default.notifications(named: expectationFulfilledNotificationName, object: expectation) {
                     if await expectation.fullyFulfilled {
                         break
@@ -56,7 +61,7 @@ public func fulfilment(of expectations: [Expectation], timeout: TimeInterval, st
                 let expected = expectation.expectedFulfilmentCount
                 let actual = await expectation.actualFulfilmentCount
                 if expected <= actual {
-                    await log("Expectation '\(expectation.name)' fulfilled \(expected) time(s) as expected", .success)
+                    await log("Expectation '\(expectation.name)' fulfilled \(expected) time(s) as expected.", .success)
                 } else {
                     await log("Expectation '\(expectation.name)' is fulfilled \(actual) time(s), but \(expected) time(s) were expected.", .failure)
                 }
@@ -70,7 +75,7 @@ public func fulfilment(of expectations: [Expectation], timeout: TimeInterval, st
         } catch {
             TestingContext.currentTestMethod?.state = .failure
             if stopIfFail {
-                throw TestFailure(message: "Expectations are not fulfilled as expected", file: file, line: line, column: column)
+                throw TestFailure(message: "Expectations are not fulfilled as expected.", file: file, line: line, column: column)
             }
         }
         group.cancelAll()
