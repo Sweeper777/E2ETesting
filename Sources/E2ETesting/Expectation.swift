@@ -71,11 +71,12 @@ public func fulfilment(of expectations: [Expectation], timeout: TimeInterval, st
             for try await _ in group.prefix(expectations.count) {
                 
             }
-            print("Done")
         } catch {
+            let failure = TestFailure(message: "Expectations are not fulfilled as expected.", file: file, line: line, column: column)
+            log(failure.description, .failure)
             TestingContext.currentTestMethod?.state = .failure
             if stopIfFail {
-                throw TestFailure(message: "Expectations are not fulfilled as expected.", file: file, line: line, column: column)
+                throw failure
             }
         }
         group.cancelAll()
