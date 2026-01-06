@@ -147,6 +147,44 @@ public func _assertGreaterThan<T: Comparable>(_ actual: T, _ actualExpression: S
 }
 
 @MainActor
+public func _assertAtLeast<T: Comparable>(_ actual: T, _ actualExpression: StaticString, _ expected: T, _ expectedExpression: StaticString, _ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
+    if !(actual >= expected) {
+        let actualDescription = String(reflecting: actual)
+        let expectedDescription = String(reflecting: expected)
+        let failure = TestFailure(
+            message: "`\(actualExpression)` is not at least `\(expectedExpression)`. Actual: `\(actualDescription)`, Expected: `\(expectedDescription)`",
+            file: file, line: line, column: column
+        )
+        log(failure.description, .failure)
+        TestingContext.currentTestMethod?.state = .failure
+        if stopIfFail {
+            throw failure
+        }
+    } else {
+        log("`\(actualExpression)` is at least `\(expectedExpression)`", .success)
+    }
+}
+
+@MainActor
+public func _assertAtMost<T: Comparable>(_ actual: T, _ actualExpression: StaticString, _ expected: T, _ expectedExpression: StaticString, _ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
+    if !(actual <= expected) {
+        let actualDescription = String(reflecting: actual)
+        let expectedDescription = String(reflecting: expected)
+        let failure = TestFailure(
+            message: "`\(actualExpression)` is not at most `\(expectedExpression)`. Actual: `\(actualDescription)`, Expected: `\(expectedDescription)`",
+            file: file, line: line, column: column
+        )
+        log(failure.description, .failure)
+        TestingContext.currentTestMethod?.state = .failure
+        if stopIfFail {
+            throw failure
+        }
+    } else {
+        log("`\(actualExpression)` is at most `\(expectedExpression)`", .success)
+    }
+}
+
+@MainActor
 public func _assertTrue(_ actual: Bool, _ actualExpression: StaticString, _ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
     if !actual {
         let failure = TestFailure(
@@ -211,5 +249,45 @@ public func _assertNil<T>(_ actual: T?, _ actualExpression: StaticString, _ stop
         }
     } else {
         log("`\(actualExpression)` is nil.", .success)
+    }
+}
+
+@MainActor
+public func _assertContains<S: Sequence>(_ sequence: S, _ sequenceExpression: StaticString, _ element: S.Element, _ elementExpression: StaticString, _ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws
+    where S.Element: Equatable {
+    if !sequence.contains(element) {
+        let sequenceDescription = String(reflecting: sequence)
+        let elementDescription = String(reflecting: element)
+        let failure = TestFailure(
+            message: "`\(sequenceExpression)` does not contain `\(elementExpression)`! Sequence: `\(sequenceDescription)`, Expected Element: `\(elementDescription)`",
+            file: file, line: line, column: column
+        )
+        log(failure.description, .failure)
+        TestingContext.currentTestMethod?.state = .failure
+        if stopIfFail {
+            throw failure
+        }
+    } else {
+        log("`\(sequenceExpression)` contains `\(elementExpression)`.", .success)
+    }
+}
+
+@MainActor
+public func _assertNotContains<S: Sequence>(_ sequence: S, _ sequenceExpression: StaticString, _ element: S.Element, _ elementExpression: StaticString, _ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws
+    where S.Element: Equatable {
+    if sequence.contains(element) {
+        let sequenceDescription = String(reflecting: sequence)
+        let elementDescription = String(reflecting: element)
+        let failure = TestFailure(
+            message: "`\(sequenceExpression)` unexpectedly contains `\(elementExpression)`! Sequence: `\(sequenceDescription)`, Unexpected Element: `\(elementDescription)`",
+            file: file, line: line, column: column
+        )
+        log(failure.description, .failure)
+        TestingContext.currentTestMethod?.state = .failure
+        if stopIfFail {
+            throw failure
+        }
+    } else {
+        log("`\(sequenceExpression)` does not contain `\(elementExpression)`.", .success)
     }
 }

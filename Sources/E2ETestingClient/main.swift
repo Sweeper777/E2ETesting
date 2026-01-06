@@ -52,7 +52,16 @@ final class MyTests {
             try await Task.sleep(for: .seconds(0.2))
         }
     }
+    
+    @TestMethod
+    func sequences() async throws {
+        let array = [1,2,3]
+        #assertContains(array, 1, stopIfFail: false)
+        #assertContains(array, 4, stopIfFail: false)
+        #assertNotContains(array, 1, stopIfFail: false)
+        #assertNotContains(array, 4, stopIfFail: false)
+    }
 }
 
-//let report = try await TestRunner.run(MyTests.self)
+let report = try await TestRunner.run(MyTests.self, methodName: "sequences")
 //try report.makeMarkdown().format().data(using: .utf8)!.write(to: URL(filePath: "/Users/mulangsu/Desktop/report.md"))

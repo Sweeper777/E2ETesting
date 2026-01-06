@@ -16,12 +16,38 @@ public macro assertGreaterThan<T: Comparable>(_ actual: T, _ expected: T, stopIf
     = #externalMacro(module: "E2ETestingMacros", type: "AssertMacro")
 
 @freestanding(expression)
+public macro assertAtMost<T: Comparable>(_ actual: T, _ expected: T, stopIfFail: Bool)
+    = #externalMacro(module: "E2ETestingMacros", type: "AssertMacro")
+
+@freestanding(expression)
+public macro assertAtLeast<T: Comparable>(_ actual: T, _ expected: T, stopIfFail: Bool)
+    = #externalMacro(module: "E2ETestingMacros", type: "AssertMacro")
+
+@freestanding(expression)
 public macro assertNotNil<T>(_ actual: T?) -> T
     = #externalMacro(module: "E2ETestingMacros", type: "AssertMacro")
 
 @freestanding(expression)
 public macro assertNil<T>(_ actual: T?, stopIfFail: Bool)
     = #externalMacro(module: "E2ETestingMacros", type: "AssertMacro")
+
+@freestanding(expression)
+public macro assertTrue(_ actual: Bool, stopIfFail: Bool)
+    = #externalMacro(module: "E2ETestingMacros", type: "AssertMacro")
+
+@freestanding(expression)
+public macro assertFalse(_ actual: Bool, stopIfFail: Bool)
+    = #externalMacro(module: "E2ETestingMacros", type: "AssertMacro")
+
+@freestanding(expression)
+public macro assertContains<S: Sequence>(_ sequence: S, _ element: S.Element, stopIfFail: Bool)
+    = #externalMacro(module: "E2ETestingMacros", type: "AssertMacro")
+where S.Element: Equatable
+
+@freestanding(expression)
+public macro assertNotContains<S: Sequence>(_ sequence: S, _ element: S.Element, stopIfFail: Bool)
+    = #externalMacro(module: "E2ETestingMacros", type: "AssertMacro")
+where S.Element: Equatable
 
 @freestanding(expression)
 public macro measure<T>(_ name: String, _ block: () async throws -> T) -> T
