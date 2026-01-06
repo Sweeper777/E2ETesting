@@ -50,6 +50,10 @@ public macro assertNotContains<S: Sequence>(_ sequence: S, _ element: S.Element,
 where S.Element: Equatable
 
 @freestanding(expression)
+public macro assertApproximatelyEqual<T: Numeric>(_ actual: T, _ expected: T, accuracy: T, stopIfFail: Bool)
+    = #externalMacro(module: "E2ETestingMacros", type: "AssertMacro")
+
+@freestanding(expression)
 public macro measure<T>(_ name: String, _ block: () async throws -> T) -> T
     = #externalMacro(module: "E2ETestingMacros", type: "MeasureMacro")
 

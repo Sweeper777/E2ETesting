@@ -291,3 +291,23 @@ public func _assertNotContains<S: Sequence>(_ sequence: S, _ sequenceExpression:
         log("`\(sequenceExpression)` does not contain `\(elementExpression)`.", .success)
     }
 }
+
+@MainActor
+public func _assertApproximatelyEqual<T: Numeric>(_ actual: T, _ actualExpression: StaticString, _ expected: T, _ expectedExpression: StaticString, _ accuracy: T,_ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
+    let difference = actual - expected
+    if difference.magnitude > accuracy.magnitude {
+        let actualDescription = String(reflecting: actual)
+        let expectedDescription = String(reflecting: expected)
+        let failure = TestFailure(
+            message: "`\(actualExpression)` is not approximately equal to `\(expectedExpression)` (accuracy: ±\(accuracy)). Actual: `\(actualDescription)`, Expected: `\(expectedDescription)`",
+            file: file, line: line, column: column
+        )
+        log(failure.description, .failure)
+        TestingContext.currentTestMethod?.state = .failure
+        if stopIfFail {
+            throw failure
+        }
+    } else {
+        log("`\(actualExpression)` is within ±\(accuracy) of `\(expectedExpression)`", .success)
+    }
+}
