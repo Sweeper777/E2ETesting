@@ -9,7 +9,7 @@ import Markdown
 
 @MainActor
 public struct TestReport {
-    let suites: [any TestSuite]
+    var suites: [any TestSuite]
     
     public func makeMarkdown(
         includedSeverityLevels: Set<LogSeverity> = [.info, .failure, .success, .warning, .measurement]
@@ -48,10 +48,14 @@ public struct TestReport {
     }
     
     private func parseInlineMarkdown(_ markdown: String) -> [any InlineMarkup] {
-        var document = Document(parsing: markdown)
+        let document = Document(parsing: markdown)
         guard let firstBlock = document.blockChildren.first(where: { _ in true }) else {
             return []
         }
         return firstBlock.children.compactMap { $0 as? InlineMarkup }
+    }
+    
+    public mutating func append(_ other: TestReport) {
+        suites.append(contentsOf: other.suites)
     }
 }
