@@ -64,11 +64,13 @@ public func log(_ message: String, _ severity: LogSeverity = .info) {
 }
 
 @MainActor
-public func failTest(_ message: String, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
+public func failTest(_ message: String, stop: Bool = true, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
     let failure = TestFailure(message: message, file: file, line: line, column: column)
     log(failure.description, .failure)
     TestingContext.currentTestMethod?.state = .failure
-    throw failure
+    if stop {
+        throw failure
+    }
 }
 
 @MainActor
