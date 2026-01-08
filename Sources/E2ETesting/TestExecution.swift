@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import XCTest
 
 public enum LogSeverity: Hashable {
     case meta
@@ -64,7 +65,18 @@ public func log(_ message: String, _ severity: LogSeverity = .info) {
 }
 
 @MainActor
-public func failTest(_ message: String, stop: Bool = true, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
+public func failTest(
+    _ message: String,
+    stop: Bool = true,
+    file: StaticString = #fileID,
+    line: Int = #line,
+    column: Int = #column
+) throws {
+    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
+        XCTFail(message)
+        return
+    }
+    
     let failure = TestFailure(message: message, file: file, line: line, column: column)
     log(failure.description, .failure)
     TestingContext.currentTestMethod?.state = .failure
@@ -74,7 +86,20 @@ public func failTest(_ message: String, stop: Bool = true, file: StaticString = 
 }
 
 @MainActor
-public func _assertEqual<T: Equatable>(_ actual: T, _ actualExpression: StaticString, _ expected: T, _ expectedExpression: StaticString, _ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
+public func _assertEqual<T: Equatable>(
+    _ actual: T,
+    _ actualExpression: StaticString,
+    _ expected: T,
+    _ expectedExpression: StaticString,
+    _ stopIfFail: Bool,
+    file: StaticString = #fileID,
+    line: Int = #line,
+    column: Int = #column
+) throws {
+    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
+        XCTAssertEqual(actual, expected)
+        return
+    }
     if actual != expected {
         let actualDescription = String(reflecting: actual)
         let expectedDescription = String(reflecting: expected)
@@ -93,7 +118,20 @@ public func _assertEqual<T: Equatable>(_ actual: T, _ actualExpression: StaticSt
 }
 
 @MainActor
-public func _assertNotEqual<T: Equatable>(_ actual: T, _ actualExpression: StaticString, _ expected: T, _ expectedExpression: StaticString, _ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
+public func _assertNotEqual<T: Equatable>(
+    _ actual: T,
+    _ actualExpression: StaticString,
+    _ expected: T,
+    _ expectedExpression: StaticString,
+    _ stopIfFail: Bool,
+    file: StaticString = #fileID,
+    line: Int = #line,
+    column: Int = #column
+) throws {
+    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
+        XCTAssertNotEqual(actual, expected)
+        return
+    }
     if actual == expected {
         let actualDescription = String(reflecting: actual)
         let failure = TestFailure(
@@ -111,7 +149,21 @@ public func _assertNotEqual<T: Equatable>(_ actual: T, _ actualExpression: Stati
 }
 
 @MainActor
-public func _assertLessThan<T: Comparable>(_ actual: T, _ actualExpression: StaticString, _ expected: T, _ expectedExpression: StaticString, _ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
+public func _assertLessThan<T: Comparable>(
+    _ actual: T,
+    _ actualExpression: StaticString,
+    _ expected: T,
+    _ expectedExpression: StaticString,
+    _ stopIfFail: Bool,
+    file: StaticString = #fileID,
+    line: Int = #line,
+    column: Int = #column
+) throws {
+    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
+        XCTAssertLessThan(actual, expected)
+        return
+    }
+    
     if !(actual < expected) {
         let actualDescription = String(reflecting: actual)
         let expectedDescription = String(reflecting: expected)
@@ -130,7 +182,21 @@ public func _assertLessThan<T: Comparable>(_ actual: T, _ actualExpression: Stat
 }
 
 @MainActor
-public func _assertGreaterThan<T: Comparable>(_ actual: T, _ actualExpression: StaticString, _ expected: T, _ expectedExpression: StaticString, _ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
+public func _assertGreaterThan<T: Comparable>(
+    _ actual: T,
+    _ actualExpression: StaticString,
+    _ expected: T,
+    _ expectedExpression: StaticString,
+    _ stopIfFail: Bool,
+    file: StaticString = #fileID,
+    line: Int = #line,
+    column: Int = #column
+) throws {
+    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
+        XCTAssertGreaterThan(actual, expected)
+        return
+    }
+    
     if !(actual > expected) {
         let actualDescription = String(reflecting: actual)
         let expectedDescription = String(reflecting: expected)
@@ -149,7 +215,20 @@ public func _assertGreaterThan<T: Comparable>(_ actual: T, _ actualExpression: S
 }
 
 @MainActor
-public func _assertAtLeast<T: Comparable>(_ actual: T, _ actualExpression: StaticString, _ expected: T, _ expectedExpression: StaticString, _ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
+public func _assertAtLeast<T: Comparable>(
+    _ actual: T,
+    _ actualExpression: StaticString,
+    _ expected: T,
+    _ expectedExpression: StaticString,
+    _ stopIfFail: Bool,
+    file: StaticString = #fileID,
+    line: Int = #line,
+    column: Int = #column
+) throws {
+    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
+        XCTAssertGreaterThanOrEqual(actual, expected)
+        return
+    }
     if !(actual >= expected) {
         let actualDescription = String(reflecting: actual)
         let expectedDescription = String(reflecting: expected)
@@ -168,7 +247,20 @@ public func _assertAtLeast<T: Comparable>(_ actual: T, _ actualExpression: Stati
 }
 
 @MainActor
-public func _assertAtMost<T: Comparable>(_ actual: T, _ actualExpression: StaticString, _ expected: T, _ expectedExpression: StaticString, _ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
+public func _assertAtMost<T: Comparable>(
+    _ actual: T,
+    _ actualExpression: StaticString,
+    _ expected: T,
+    _ expectedExpression: StaticString,
+    _ stopIfFail: Bool,
+    file: StaticString = #fileID,
+    line: Int = #line,
+    column: Int = #column
+) throws {
+    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
+        XCTAssertLessThanOrEqual(actual, expected)
+        return
+    }
     if !(actual <= expected) {
         let actualDescription = String(reflecting: actual)
         let expectedDescription = String(reflecting: expected)
@@ -187,7 +279,18 @@ public func _assertAtMost<T: Comparable>(_ actual: T, _ actualExpression: Static
 }
 
 @MainActor
-public func _assertTrue(_ actual: Bool, _ actualExpression: StaticString, _ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
+public func _assertTrue(
+    _ actual: Bool,
+    _ actualExpression: StaticString,
+    _ stopIfFail: Bool,
+    file: StaticString = #fileID,
+    line: Int = #line,
+    column: Int = #column
+) throws {
+    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
+        XCTAssertTrue(actual)
+        return
+    }
     if !actual {
         let failure = TestFailure(
             message: "`\(actualExpression)` is not `true`.",
@@ -204,7 +307,18 @@ public func _assertTrue(_ actual: Bool, _ actualExpression: StaticString, _ stop
 }
 
 @MainActor
-public func _assertFalse(_ actual: Bool, _ actualExpression: StaticString, _ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
+public func _assertFalse(
+    _ actual: Bool,
+    _ actualExpression: StaticString,
+    _ stopIfFail: Bool,
+    file: StaticString = #fileID,
+    line: Int = #line,
+    column: Int = #column
+) throws {
+    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
+        XCTAssertFalse(actual)
+        return
+    }
     if actual {
         let failure = TestFailure(
             message: "`\(actualExpression)` is not `false`.",
@@ -222,7 +336,21 @@ public func _assertFalse(_ actual: Bool, _ actualExpression: StaticString, _ sto
 
 @MainActor
 @discardableResult
-public func _assertNotNil<T>(_ actual: T?, _ actualExpression: StaticString, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws -> T {
+public func _assertNotNil<T>(
+    _ actual: T?,
+    _ actualExpression: StaticString,
+    file: StaticString = #fileID,
+    line: Int = #line,
+    column: Int = #column
+) throws -> T {
+    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
+        XCTAssertNotNil(actual)
+        throw TestFailure(
+            message: "`\(actualExpression)` is `nil`!",
+            file: file, line: line, column: column
+        )
+    }
+    
     guard let actual else {
         let failure = TestFailure(
             message: "`\(actualExpression)` is `nil`!",
@@ -237,7 +365,18 @@ public func _assertNotNil<T>(_ actual: T?, _ actualExpression: StaticString, fil
 }
 
 @MainActor
-public func _assertNil<T>(_ actual: T?, _ actualExpression: StaticString, _ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
+public func _assertNil<T>(
+    _ actual: T?,
+    _ actualExpression: StaticString,
+    _ stopIfFail: Bool,
+    file: StaticString = #fileID,
+    line: Int = #line,
+    column: Int = #column
+) throws {
+    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
+        XCTAssertNil(actual)
+        return
+    }
     if let actual {
         let actualDescription = String(reflecting: actual)
         let failure = TestFailure(
@@ -255,8 +394,20 @@ public func _assertNil<T>(_ actual: T?, _ actualExpression: StaticString, _ stop
 }
 
 @MainActor
-public func _assertContains<S: Sequence>(_ sequence: S, _ sequenceExpression: StaticString, _ element: S.Element, _ elementExpression: StaticString, _ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws
-    where S.Element: Equatable {
+public func _assertContains<S: Sequence>(
+    _ sequence: S,
+    _ sequenceExpression: StaticString,
+    _ element: S.Element,
+    _ elementExpression: StaticString,
+    _ stopIfFail: Bool,
+    file: StaticString = #fileID,
+    line: Int = #line,
+    column: Int = #column
+) throws where S.Element: Equatable {
+    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
+        XCTAssertTrue(sequence.contains(element))
+        return
+    }
     if !sequence.contains(element) {
         let sequenceDescription = String(reflecting: sequence)
         let elementDescription = String(reflecting: element)
@@ -275,8 +426,20 @@ public func _assertContains<S: Sequence>(_ sequence: S, _ sequenceExpression: St
 }
 
 @MainActor
-public func _assertNotContains<S: Sequence>(_ sequence: S, _ sequenceExpression: StaticString, _ element: S.Element, _ elementExpression: StaticString, _ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws
-    where S.Element: Equatable {
+public func _assertNotContains<S: Sequence>(
+    _ sequence: S,
+    _ sequenceExpression: StaticString,
+    _ element: S.Element,
+    _ elementExpression: StaticString,
+    _ stopIfFail: Bool,
+    file: StaticString = #fileID,
+    line: Int = #line,
+    column: Int = #column
+) throws where S.Element: Equatable {
+    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
+        XCTAssertFalse(sequence.contains(element))
+        return
+    }
     if sequence.contains(element) {
         let sequenceDescription = String(reflecting: sequence)
         let elementDescription = String(reflecting: element)
@@ -295,7 +458,21 @@ public func _assertNotContains<S: Sequence>(_ sequence: S, _ sequenceExpression:
 }
 
 @MainActor
-public func _assertApproximatelyEqual<T: Numeric>(_ actual: T, _ actualExpression: StaticString, _ expected: T, _ expectedExpression: StaticString, _ accuracy: T,_ stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) throws {
+public func _assertApproximatelyEqual<T: Numeric>(
+    _ actual: T,
+    _ actualExpression: StaticString,
+    _ expected: T,
+    _ expectedExpression: StaticString,
+    _ accuracy: T,
+    _ stopIfFail: Bool,
+    file: StaticString = #fileID,
+    line: Int = #line,
+    column: Int = #column
+) throws {
+    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
+        XCTAssertEqual(actual, expected, accuracy: accuracy)
+        return
+    }
     let difference = actual - expected
     if difference.magnitude > accuracy.magnitude {
         let actualDescription = String(reflecting: actual)
