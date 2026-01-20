@@ -7,6 +7,7 @@
 
 import Foundation
 import XCTest
+import os
 
 public enum LogSeverity: Hashable {
     case meta
@@ -56,12 +57,14 @@ public func _measure<T>(_ name: String, _ block: () async throws -> T, _ blockDe
     return returnValue
 }
 
+let logger = Logger(subsystem: "io.github.sweeper777.E2ETesting", category: "Test Log")
+
 @MainActor
 public func log(_ message: String, _ severity: LogSeverity = .info) {
     precondition(TestingContext.currentTestMethod != nil, "Not testing!")
     let log = TestLog(severity: severity, message: message)
     TestingContext.currentTestMethod!.logs.append(log)
-    print(log)
+    logger.log(level: severity == .failure ? .fault : .default, "\(message)")
 }
 
 @MainActor
