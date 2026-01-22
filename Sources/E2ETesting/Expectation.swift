@@ -7,7 +7,6 @@
 
 import Foundation
 import Combine
-import XCTest
 
 private let expectationFulfilledNotificationName = Notification.Name("E2ETestingExpectationFulfilled")
 
@@ -41,14 +40,7 @@ public actor Expectation {
 private struct Timeout: Error {}
 
 @MainActor
-public func fulfilment(
-    of expectations: [Expectation],
-    timeout: TimeInterval,
-    stopIfFail: Bool,
-    file: StaticString = #fileID,
-    line: Int = #line,
-    column: Int = #column
-) async throws {
+public func fulfilment(of expectations: [Expectation], timeout: TimeInterval, stopIfFail: Bool, file: StaticString = #fileID, line: Int = #line, column: Int = #column) async throws {
     try await withThrowingTaskGroup { group in
         group.addTask {
             try await Task.sleep(for: .seconds(timeout))
@@ -82,9 +74,6 @@ public func fulfilment(
         } catch {
             let failure = TestFailure(message: "Expectations are not fulfilled as expected.", file: file, line: line, column: column)
             log(failure.description, .failure)
-            if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
-                XCTFail(failure.description)
-            }
             TestingContext.currentTestMethod?.state = .failure
             if stopIfFail {
                 throw failure
