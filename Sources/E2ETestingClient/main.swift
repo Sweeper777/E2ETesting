@@ -76,5 +76,5 @@ final class MyTests {
     }
 }
 
-let report = try await TestRunner.run(MyTests.self, methodName: "approximatelyEqual")
+let report = try await TestRunner.run(MyTests.self, methodName: "measurement")
 //try report.makeMarkdown().format().data(using: .utf8)!.write(to: URL(filePath: "/Users/mulangsu/Desktop/report.md"))
