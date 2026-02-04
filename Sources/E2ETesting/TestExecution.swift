@@ -63,7 +63,7 @@ public func log(_ message: String, _ severity: LogSeverity = .info) {
     precondition(TestingContext.currentTestMethod != nil, "Not testing!")
     let log = TestLog(severity: severity, message: message)
     TestingContext.currentTestMethod!.logs.append(log)
-    logger.log(level: severity == .failure ? .fault : .default, "\(message)")
+    logger.log(level: severity == .failure ? .fault : .default, "\(severity.prefix)\(message)")
 }
 
 @MainActor
