@@ -74,7 +74,16 @@ final class MyTests {
         #assertApproximatelyEqual(0.1 + 0.2, 0.3, accuracy: 0.001, stopIfFail: false)
         #assertApproximatelyEqual(0.1 + 0.2, 0.3, accuracy: 0, stopIfFail: false)
     }
+    
+    @TestMethod
+    func reliability() async throws {
+        try await runReliabilityTests(iterations: 99) {
+            if Double.random(in: 0..<1) > 0.77 {
+                try failTest("Fail")
+            }
+        }
+    }
 }
 
-let report = try await TestRunner.run(MyTests.self, methodName: "measurement")
+let report = try await TestRunner.run(MyTests.self, methodName: "reliability")
 //try report.makeMarkdown().format().data(using: .utf8)!.write(to: URL(filePath: "/Users/mulangsu/Desktop/report.md"))
