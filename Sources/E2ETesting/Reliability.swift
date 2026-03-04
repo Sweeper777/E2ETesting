@@ -9,6 +9,13 @@ import Foundation
 
 @MainActor
 public func runReliabilityTests(iterations: Int, block: () async throws -> Void) async throws {
+    try await runReliabilityTests(iterations: iterations) { _ in
+        try await block()
+    }
+}
+
+@MainActor
+public func runReliabilityTests(iterations: Int, block: (inout Any?) async throws -> Void) async throws {
     guard let testMethod = TestingContext.currentTestMethod else {
         fatalError("Not testing!")
     }
@@ -18,15 +25,20 @@ public func runReliabilityTests(iterations: Int, block: () async throws -> Void)
     var squares = ""
     var errorMessages = [String]()
     for _ in 0..<iterations {
+        var tag: Any? = nil
         do {
             try Task.checkCancellation()
-            try await block()
+            try await block(&tag)
         } catch is CancellationError {
             break
         } catch {
             testMethod.reliabilityStats?.failureCount += 1
             squares.append("🟥")
-            errorMessages.append("\(error)")
+            if let tag {
+                errorMessages.append("\(error) (tag: \(tag))")
+            } else {
+                errorMessages.append("\(error)")
+            }
             continue
         }
         testMethod.reliabilityStats?.successCount += 1

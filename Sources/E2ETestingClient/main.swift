@@ -77,8 +77,10 @@ final class MyTests {
     
     @TestMethod
     func reliability() async throws {
-        try await runReliabilityTests(iterations: 99) {
-            if Double.random(in: 0..<1) > 0.77 {
+        try await runReliabilityTests(iterations: 99) { tag in
+            let d = Double.random(in: 0..<1)
+            tag = d
+            if d > 0.77 {
                 try failTest("Fail")
             }
         }
