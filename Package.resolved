@@ -1,5 +1,5 @@
 {
-  "originHash" : "4491c2bf21f69cc8872d72deba3ebdf38ad93dde8615ea507de770f04e06f218",
+  "originHash" : "1d1e813e5242619b93a116596ffa13497264604c974c09fcdf912a2c22628963",
   "pins" : [
     {
       "identity" : "swift-cmark",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax.git",
       "state" : {
-        "revision" : "4799286537280063c85a32f09884cfbca301b1a1",
-        "version" : "602.0.0"
+        "revision" : "9de99a78f099e59caf2b2beec65a4c45d54b2081",
+        "version" : "603.0.1"
       }
     }
   ],

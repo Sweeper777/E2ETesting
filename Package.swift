@@ -1,4 +1,4 @@
-// swift-tools-version: 6.2
+// swift-tools-version: 6.3
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -19,7 +19,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "602.0.0-latest"),
+        .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "603.0.0-latest"),
         .package(url: "https://github.com/swiftlang/swift-markdown", .upToNextMajor(from: "0.7.3")),
     ],
     targets: [
