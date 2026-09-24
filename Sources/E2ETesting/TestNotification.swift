@@ -22,10 +22,16 @@ public enum TestNotification {
         NotificationCenter.default.post(name: didEndSuite, object: nil, userInfo: [suiteKey: suite])
     }
     
-    static func postStart(_ method: TestMethod) {
-        NotificationCenter.default.post(name: didStartMethod, object: nil, userInfo: [testMethodKey: method])
+    static func postStart(_ suite: any TestSuite, _ method: TestMethod) {
+        NotificationCenter.default.post(name: didStartMethod, object: nil, userInfo: [
+            testMethodKey: method,
+            suiteKey: suite,
+        ])
     }
-    static func postEnd(_ method: TestMethod) {
-        NotificationCenter.default.post(name: didEndMethod, object: nil, userInfo: [testMethodKey: method])
+    static func postEnd(_ suite: any TestSuite, _ method: TestMethod) {
+        NotificationCenter.default.post(name: didEndMethod, object: nil, userInfo: [
+            testMethodKey: method,
+            suiteKey: suite,
+        ])
     }
 }
