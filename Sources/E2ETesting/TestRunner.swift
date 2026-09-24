@@ -30,7 +30,11 @@ public enum TestRunner {
     private static func runOneMethod(_ test: some TestSuite, method: TestMethod) async throws {
         try Task.checkCancellation()
         TestingContext.currentTestMethod = method
-        defer { TestingContext.currentTestMethod = nil }
+        TestNotification.postStart(method)
+        defer {
+            TestingContext.currentTestMethod = nil
+            TestNotification.postEnd(method)
+        }
         method.state = .running
         
         log("Setting up test: '\(method.name)'...", .meta)
